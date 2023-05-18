@@ -8,7 +8,8 @@ const app = express();
 
 const port = process.env.PORT || 2000;
 
-app.use(cors())
+app.use(cors());
+app.use(express.json());
 
 
 
@@ -27,7 +28,16 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    const superToysCollection = client.db("superToyDB").collection("Toys")
 
+
+    // add a toy route
+
+    app.post("/add-toy", async(req, res) => {
+        const toy = req.body;
+        const result = await superToysCollection.insertOne(toy)
+        res.send(result);
+    })
 
 
 
