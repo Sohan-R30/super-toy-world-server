@@ -39,6 +39,16 @@ async function run() {
         res.send(result);
     })
 
+    // my toys route
+
+    app.get("/my-toys/:email", async(req, res) => {
+        const email = req.params.email;
+        const query = {sellarEmail: {$eq: email}};
+        const cursor = superToysCollection.find(query);
+        const result = await cursor.toArray();
+        res.send(result)
+    })
+
 
 
     // Send a ping to confirm a successful connection
