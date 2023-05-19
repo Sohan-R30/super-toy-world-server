@@ -39,7 +39,7 @@ async function run() {
         res.send(result);
     })
 
-    // my toys route
+    // route for show only my posted toys
 
     app.get("/my-toys/:email", async(req, res) => {
         const email = req.params.email;
@@ -49,13 +49,26 @@ async function run() {
         res.send(result)
     })
 
-    // delete a toy route
-
+    // delete a toy from my posted toys
     app.delete("/delete-toy/:id", async(req, res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         const result = await superToysCollection.deleteOne(query);
         res.send(result);
+    })
+
+    // update my toy from my posted toys
+
+  
+
+    // get data by logged user and id
+
+    app.get("/myupdate-toy",async(req,res) => {
+        const email = req.query.email;
+        const id = req.query.id;
+        const filter = {sellarEmail:email, _id: new ObjectId(id)};
+        const result = await superToysCollection.findOne(filter);
+        res.send(result)
     })
 
     // Send a ping to confirm a successful connection
