@@ -59,7 +59,16 @@ async function run() {
 
     // update my toy from my posted toys
 
-  
+    app.patch("/update-toy/:id", async(req, res) => {
+        const id = req.params.id;
+        const toy = req.body;
+        const filter = {_id: new ObjectId(id)};
+        const updateDoc = {
+            $set : toy,
+        }
+        const result = await superToysCollection.updateOne(filter,updateDoc);
+        res.send(result)
+    })
 
     // get data by logged user and id
 
