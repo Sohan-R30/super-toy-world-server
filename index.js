@@ -38,7 +38,11 @@ async function run() {
         const result = await superToysCollection.insertOne(toy)
         res.send(result);
     })
-
+    // route for show all toys for all users
+    app.get("/all-toys", async(req, res) => {
+        const result = await superToysCollection.find().toArray();
+        res.send(result)
+    })
     // route for show only my posted toys
 
     app.get("/my-toys", async(req, res) => {
