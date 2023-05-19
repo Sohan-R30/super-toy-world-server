@@ -41,11 +41,20 @@ async function run() {
 
     // route for show only my posted toys
 
-    app.get("/my-toys/:email", async(req, res) => {
-        const email = req.params.email;
+    app.get("/my-toys", async(req, res) => {
+        const email = req.query.email;
+        const assenOrdessen = req.query.sortby;
+        const sortBy = {};
+        if(assenOrdessen === "ascending"){
+            sortBy.price = 1;
+        }
+       if(assenOrdessen === "descending"){
+            sortBy.price = -1;
+        }
+        
         const query = {sellarEmail: {$eq: email}};
         const cursor = superToysCollection.find(query);
-        const result = await cursor.toArray();
+        const result = await cursor.sort(sortBy).toArray();
         res.send(result)
     })
 
