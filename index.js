@@ -31,6 +31,11 @@ async function run() {
     const superToysCollection = client.db("superToyDB").collection("Toys")
 
 
+    const indexKeys = {toyName: 1};
+    const indexOptions = {name: "ToyName"};
+
+    const result = await superToysCollection.createIndex(indexKeys,indexOptions);
+
     // add a toy route
 
     app.post("/add-toy", async(req, res) => {
@@ -43,6 +48,17 @@ async function run() {
         const result = await superToysCollection.find().toArray();
         res.send(result)
     })
+
+    // route for show all user toys by search 
+    app.get("/searchInAllToys/:text", async(req, res) => {
+        const searchText = req.params.text;
+
+        const result = await superToysCollection.find({
+            $or: [{toyName: {$regex: searchText, $options: "i"}},]
+        }).toArray();
+        res.send(result)
+    })
+
     // route for show only my posted toys
 
     app.get("/my-toys", async(req, res) => {
