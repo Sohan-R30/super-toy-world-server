@@ -36,23 +36,53 @@ async function run() {
 
     const result = await superToysCollection.createIndex(indexKeys,indexOptions);
 
-    // add a toy route
+    // route for add a toy
 
     app.post("/add-toy", async(req, res) => {
         const toy = req.body;
         const result = await superToysCollection.insertOne(toy)
         res.send(result);
     })
+
+    // route for total toys count
+    app.get("/totalToys", async(req, res) => {
+        const result = await superToysCollection.estimatedDocumentCount();
+        const totalToys = {totalToys: result};
+        res.send(totalToys)
+    })
+
+    // route for get all toys images only
+    app.get("/allImages", async(req, res) => {
+        const options = {
+            projection: { toyPhoto: 1,},
+          };
+        const result = await superToysCollection.find({},options).toArray();
+        res.send(result)
+    })
+
     // route for show all toys for all users
+
     app.get("/all-toys", async(req, res) => {
-        const result = await superToysCollection.find().toArray();
+        const page = parseInt(req.query.page) || 1 ;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+        const result = await superToysCollection.find().skip(skip).limit(limit).toArray();
+        res.send(result)
+    })
+
+
+    // route for show single toys 
+
+    app.get("/single-toy/:id", async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const result = await superToysCollection.findOne(filter)
         res.send(result)
     })
 
     // route for show all user toys by search 
     app.get("/searchInAllToys/:text", async(req, res) => {
-        const searchText = req.params.text;
-
+        const searchText = req.params.text || "";
         const result = await superToysCollection.find({
             $or: [{toyName: {$regex: searchText, $options: "i"}},]
         }).toArray();
@@ -79,7 +109,7 @@ async function run() {
     })
 
     // delete a toy from my posted toys
-    app.delete("/delete-toy/:id", async(req, res) => {
+    app.delete("/delete-toy:id", async(req, res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         const result = await superToysCollection.deleteOne(query);
