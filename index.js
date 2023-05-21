@@ -28,8 +28,9 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    const superToysCollection = client.db("superToyDB").collection("Toys")
-
+    const database = client.db("superToyDB")
+    const superToysCollection = database.collection("Toys")
+    const ReviewCollection = database.collection("Reviews")
 
     const indexKeys = {toyName: 1};
     const indexOptions = {name: "ToyName"};
@@ -42,6 +43,18 @@ async function run() {
         const toy = req.body;
         const result = await superToysCollection.insertOne(toy)
         res.send(result);
+    })
+
+    //  route for post user Reviews
+    app.post("/addReviews", async(req, res) => {
+        const toy = req.body;
+        const result = await ReviewCollection.insertOne(toy)
+        res.send(result);
+    })
+    //  route for get user all Reviews
+    app.get("/allReviews", async(req, res) => {
+        const result = await ReviewCollection.find({}).toArray();
+        res.send(result)
     })
 
     // route for total toys count
