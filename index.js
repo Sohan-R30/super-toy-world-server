@@ -60,6 +60,23 @@ async function run() {
         res.send(result)
     })
 
+    // route for all toy by categoy
+    app.get("/categoryToys", async(req, res) => {
+        const result = await superToysCollection.find({}).toArray();
+        res.send(result)
+    })
+    // route for load toy by category
+
+    app.get("/category/:category", async(req,res) => {
+        const category = req.params.category.toString();
+        const filter = {subCategory: category};
+        const options = {
+            projection: { toyPhoto: 1,toyName: 1, price: 1, ratings: 1},
+          };
+        const result = await superToysCollection.find(filter,options).toArray();
+        res.send(result)
+    })
+
     // route for show all toys for all users
 
     app.get("/all-toys", async(req, res) => {
